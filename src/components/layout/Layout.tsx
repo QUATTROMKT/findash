@@ -1,12 +1,22 @@
 import React from 'react';
-import Sidebar from './Sidebar';
+import Sidebar from './Sidebar.tsx';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+    children: React.ReactNode;
+    activeItem: string;
+    onNavigate: (id: string) => void;
+}
+
+export default function Layout({ children, activeItem, onNavigate }: LayoutProps) {
+    const { theme, toggleTheme } = useTheme();
+
     return (
         <div className="flex h-screen w-full bg-slate-50 dark:bg-background overflow-hidden">
             {/* Desktop Sidebar */}
             <div className="hidden md:flex">
-                <Sidebar expanded={true} />
+                <Sidebar expanded={true} activeItem={activeItem} onNavigate={onNavigate} />
             </div>
 
             {/* Main Content Area */}
@@ -19,12 +29,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         </div>
                         <span className="font-semibold text-lg tracking-tight">FinDash</span>
                     </div>
-                    <button className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                        {/* Hamburger Icon */}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button onClick={toggleTheme} className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-foreground">
+                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </button>
+                        <button className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-foreground">
+                            {/* Hamburger Icon */}
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
                 </header>
 
                 {/* Scrollable Content */}

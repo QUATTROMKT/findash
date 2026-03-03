@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import Dashboard from './components/dashboard/Dashboard';
+import Settings from './components/settings/Settings';
 import { authService } from './services/firebase/auth';
 import { User } from 'firebase/auth';
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState('dashboard');
 
     useEffect(() => {
         const unsubscribe = authService.onAuthStateChanged((currentUser) => {
@@ -28,7 +30,7 @@ function App() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
                 <div className="animate-pulse flex flex-col items-center">
-                    <div className="w-12 h-12 bg-primary rounded-full mb-4"></div>
+                    <div className="w-12 h-12 bg-primary rounded-full mb-4 shadow-md"></div>
                     <p className="text-lg font-medium text-slate-500">Iniciando FinDash Seguramente...</p>
                 </div>
             </div>
@@ -58,9 +60,24 @@ function App() {
         );
     }
 
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'dashboard':
+                return <Dashboard />;
+            case 'transactions':
+                return <div className="text-foreground p-8">Em breve: Relatório completo de Transações</div>;
+            case 'goals':
+                return <div className="text-foreground p-8">Em breve: Planejador de Metas 50/30/20</div>;
+            case 'settings':
+                return <Settings />;
+            default:
+                return <Dashboard />;
+        }
+    }
+
     return (
-        <Layout>
-            <Dashboard />
+        <Layout activeItem={currentPage} onNavigate={setCurrentPage}>
+            {renderPage()}
         </Layout>
     );
 }

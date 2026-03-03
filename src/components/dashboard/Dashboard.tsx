@@ -4,6 +4,7 @@ import Charts from './Charts';
 import GoalsProgress from './GoalsProgress';
 import TransactionList from '../transactions/TransactionList';
 import TransactionForm from '../transactions/TransactionForm';
+import Assistant from './Assistant';
 import { dbService } from '../../services/firebase/db';
 import { format, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -21,10 +22,6 @@ export default function Dashboard() {
             setLoading(false);
         });
     }, []);
-
-    if (loading) {
-        return <div className="text-center py-10 animate-pulse text-slate-500">Buscando informações analíticas...</div>;
-    }
 
     // Preparando dados para o Gráfico de Barras
     const last6Months = Array.from({ length: 6 }).map((_, i) => subMonths(new Date(), i)).reverse();
@@ -63,6 +60,17 @@ export default function Dashboard() {
         setTransactions(prev => [newTransaction, ...prev].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     };
 
+    if (loading) {
+        return (
+            <div className="flex h-[50vh] items-center justify-center">
+                <div className="animate-pulse flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
+                    <p className="text-sm font-medium text-slate-500">Buscando informações analíticas...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col gap-6 relative">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
@@ -81,6 +89,7 @@ export default function Dashboard() {
                 </button>
             </div>
 
+            <Assistant transactions={transactions} />
             <DashboardSummary transactions={transactions} />
             <Charts expenseData={barData} ruleData={donutData} />
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
