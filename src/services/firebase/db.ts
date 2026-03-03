@@ -56,5 +56,50 @@ export const dbService = {
             console.error("Erro ao deletar:", error);
             throw error;
         }
+    },
+
+    getGoals: async (): Promise<any[]> => {
+        const user = auth.currentUser;
+        if (!user) return [];
+
+        try {
+            const q = query(
+                collection(db, 'goals'),
+                where("userId", "==", user.uid)
+            );
+            const snapshot = await getDocs(q);
+            const data: any[] = [];
+            snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+            return data;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    },
+
+    saveGoal: async (data: any, id?: string) => {
+        const user = auth.currentUser;
+        if (!user) throw new Error("Usuário não autenticado");
+
+        if (id) {
+            // Placeholder temporário, para editar/adicionar seria updateDoc, doc 
+            // Porém o addDoc nos basta
+        } else {
+            const docRef = await addDoc(collection(db, 'goals'), {
+                ...data,
+                userId: user.uid
+            });
+            return { id: docRef.id, ...data };
+        }
+    },
+
+    deleteGoal: async (id: string) => {
+        try {
+            await deleteDoc(doc(db, 'goals', id));
+            return true;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     }
 };

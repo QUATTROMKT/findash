@@ -13,12 +13,17 @@ import { Plus } from 'lucide-react';
 
 export default function Dashboard() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [goals, setGoals] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     useEffect(() => {
-        dbService.getTransactions().then((data) => {
-            setTransactions(data as Transaction[]);
+        Promise.all([
+            dbService.getTransactions(),
+            dbService.getGoals()
+        ]).then(([txs, gls]) => {
+            setTransactions(txs as Transaction[]);
+            setGoals(gls.length > 0 ? gls : GOALS);
             setLoading(false);
         });
     }, []);
@@ -45,7 +50,27 @@ export default function Dashboard() {
         };
     });
 
-    const donutData = GOALS.map(g => ({
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const calculatedGoals = goals.map(g => {
+        let current = 0;
+        transactions.forEach(t => {
+            const d = new Date(t.date);
+            if (d.getMonth() === currentMonth && d.getFullYear() === currentYear && t.type === 'EXPENSE') {
+                if (g.group === 'ESSENTIALS' && ['cat_housing', 'cat_supermarket', 'cat_utilities'].includes(t.categoryId)) {
+                    current += t.amount;
+                } else if (g.group === 'LIFESTYLE' && ['cat_food_out', 'cat_entertainment', 'cat_transport'].includes(t.categoryId)) {
+                    current += t.amount;
+                } else if (g.group === 'INVESTMENTS_DEBTS' && ['cat_investments', 'cat_debts'].includes(t.categoryId)) {
+                    current += t.amount;
+                }
+            }
+        });
+        return { ...g, current };
+    });
+
+    const donutData = calculatedGoals.map(g => ({
         name: g.name.split(' (')[0],
         value: g.current,
     }));
@@ -97,7 +122,7 @@ export default function Dashboard() {
                     <TransactionList transactions={transactions} onDelete={handleDeleteTransaction} />
                 </div>
                 <div className="xl:col-span-1">
-                    <GoalsProgress goals={GOALS} />
+                    <GoalsProgress goals={calculatedGoals} />
                 </div>
             </div>
 

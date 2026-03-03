@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from './components/layout/Layout';
 import Dashboard from './components/dashboard/Dashboard';
 import Settings from './components/settings/Settings';
+import Goals from './components/goals/Goals';
 import { authService } from './services/firebase/auth';
 import { User } from 'firebase/auth';
 
@@ -67,7 +68,7 @@ function App() {
             case 'transactions':
                 return <div className="text-foreground p-8">Em breve: Relatório completo de Transações</div>;
             case 'goals':
-                return <div className="text-foreground p-8">Em breve: Planejador de Metas 50/30/20</div>;
+                return <Goals />;
             case 'settings':
                 return <Settings />;
             default:
