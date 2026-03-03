@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Target, Save, AlertCircle } from 'lucide-react';
 import { dbService } from '../../services/firebase/db';
 import { formatBRL } from '../../lib/utils';
-import { CATEGORIES } from '../../data/mock';
 
 interface Goal {
     id: string;
