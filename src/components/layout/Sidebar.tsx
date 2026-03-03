@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { LayoutDashboard, PieChart, ArrowRightLeft, Settings, LogOut } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { authService } from '../../services/firebase/auth';

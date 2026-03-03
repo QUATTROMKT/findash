@@ -51,7 +51,7 @@ export default function Charts({ expenseData, ruleData }: ChartsProps) {
                                 dataKey="value"
                                 stroke="none"
                             >
-                                {ruleData.map((entry, index) => (
+                                {ruleData.map((_, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>

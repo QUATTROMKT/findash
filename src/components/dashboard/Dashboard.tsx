@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardSummary from './DashboardSummary';
 import Charts from './Charts';
 import GoalsProgress from './GoalsProgress';
